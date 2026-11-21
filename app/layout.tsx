@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Manrope, Rubik } from "next/font/google";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { getCurrentUser } from "@/lib/auth";
 import "./globals.css";
 
 const display = Rubik({
@@ -19,11 +21,17 @@ export const metadata: Metadata = {
   description: "Сургуулийнхаа багт тохирох өрсөлдөгч болон заалыг хурдан ол.",
 };
 
+async function SessionNavbar() {
+  return <Navbar signedIn={Boolean(await getCurrentUser())} />;
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="mn" className={`${display.variable} ${body.variable}`}>
       <body className="antialiased">
-        <Navbar />
+        <Suspense fallback={<Navbar signedIn={false} />}>
+          <SessionNavbar />
+        </Suspense>
         <main>{children}</main>
         <Footer />
       </body>

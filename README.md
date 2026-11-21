@@ -16,6 +16,20 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## MongoDB authentication
+
+Create a `.env.local` file in the project root with your MongoDB connection string.
+The example targets a local MongoDB instance. For MongoDB Atlas, use your Atlas connection string.
+
+```dotenv
+MONGODB_URI=mongodb://127.0.0.1:27017
+MONGODB_DB=scrimmage
+```
+
+The application uses the `users` and `sessions` collections and creates a TTL index for expired sessions. Give the database user read/write access to the selected database so it can create the collections and index.
+
+Restart the dev server after adding the environment variables. Open `/register` to create an account, sign in at `/login`, and use `/account` to see your account and sign out.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
