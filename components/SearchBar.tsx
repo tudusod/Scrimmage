@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
-import { DATE_OPTIONS, GRADES, type District } from "@/lib/data";
+import { GRADES, type District } from "@/lib/data";
 
 const fieldCls =
   "w-full rounded-xl border border-line bg-court px-4 py-3 text-sm font-medium text-white focus:border-flame";
@@ -11,7 +11,7 @@ export function SearchBar({ districts }: { districts: District[] }) {
   const router = useRouter();
   const [district, setDistrict] = useState("");
   const [grade, setGrade] = useState("");
-  const [date, setDate] = useState<string>(DATE_OPTIONS[0]);
+  const [date, setDate] = useState("");
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,11 +48,13 @@ export function SearchBar({ districts }: { districts: District[] }) {
 
           <label className="block">
             <span className="mb-1.5 block text-xs font-semibold text-mute">Огноо</span>
-            <select className={fieldCls} value={date} onChange={(e) => setDate(e.target.value)}>
-              {DATE_OPTIONS.map((d) => (
-                <option key={d} value={d}>{d}</option>
-              ))}
-            </select>
+            <input
+              className={`${fieldCls} [color-scheme:dark]`}
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              aria-label="Огноо сонгох"
+            />
           </label>
 
           <button
