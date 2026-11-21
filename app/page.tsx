@@ -2,7 +2,6 @@ import { Hero } from "@/components/Hero";
 import { SearchBar } from "@/components/SearchBar";
 import { DistrictGrid } from "@/components/DistrictGrid";
 import { MatchFeed } from "@/components/MatchFeed";
-import { CtaBanner } from "@/components/Footer";
 import { getDistricts, getLatestMatches } from "@/lib/data";
 
 export default async function Home() {
@@ -13,7 +12,6 @@ export default async function Home() {
       <SearchBar districts={districts} />
       <DistrictGrid districts={districts} />
       <MatchFeed matches={matches} />
-      <CtaBanner />
     </>
   );
 }
