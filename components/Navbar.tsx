@@ -11,8 +11,11 @@ const LINKS = [
   { label: "Заал хайх", href: "/courts" },
 ];
 
-export function Navbar() {
+export function Navbar({ signedIn }: { signedIn: boolean }) {
   const [open, setOpen] = useState(false);
+  const authLinks = signedIn
+    ? [{ href: "/account", label: "Миний бүртгэл" }]
+    : [{ href: "/login", label: "Нэвтрэх" }, { href: "/register", label: "Бүртгүүлэх" }];
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-court/80 backdrop-blur">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
@@ -27,8 +30,13 @@ export function Navbar() {
         </ul>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <a href="/login" className="rounded-lg border border-line px-4 py-2 text-sm font-semibold transition hover:border-flame hover:text-flame">Нэвтрэх</a>
-          <a href="/register" className="rounded-lg bg-flame px-4 py-2 text-sm font-bold text-white shadow-[0_0_24px_-4px_#ff5722] transition hover:bg-flame-soft">Баг бүртгүүлэх</a>
+          {authLinks.map(({ href, label }) => (
+            <Link key={href} href={href} className={href === "/login"
+              ? "rounded-lg border border-line px-4 py-2 text-sm font-semibold transition hover:border-flame hover:text-flame"
+              : "rounded-lg bg-flame px-4 py-2 text-sm font-bold text-court transition hover:bg-flame-soft"}>
+              {label}
+            </Link>
+          ))}
         </div>
 
         <button className="lg:hidden" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label="Цэс">
@@ -45,9 +53,14 @@ export function Navbar() {
               </li>
             ))}
           </ul>
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <a href="/login" className="rounded-lg border border-line py-3 text-center text-sm font-semibold">Нэвтрэх</a>
-            <a href="/register" className="rounded-lg bg-flame py-3 text-center text-sm font-bold">Баг бүртгүүлэх</a>
+          <div className="mt-3 flex gap-3">
+            {authLinks.map(({ href, label }) => (
+              <Link key={href} href={href} onClick={() => setOpen(false)} className={href === "/login"
+                ? "flex-1 rounded-lg border border-line py-3 text-center text-sm font-semibold"
+                : "flex-1 rounded-lg bg-flame py-3 text-center text-sm font-bold text-court"}>
+                {label}
+              </Link>
+            ))}
           </div>
         </div>
       )}
