@@ -1,3 +1,5 @@
+import { connection } from "next/server";
+
 // Dummy data + async "API" layer. Replace the bodies of get* functions with
 // fetch(`${process.env.API_URL}/api/...`) calls to your Node/Express/Mongo backend.
 
@@ -54,6 +56,8 @@ export async function getMatches(f: MatchFilters = {}): Promise<Match[]> {
   // Дараа нь: GET /api/matches?district=..&grade=..&date=..
   const districtName = districts.find((d) => d.id === f.district)?.name;
   const range = f.grade?.match(/\d+/g)?.map(Number); // "10-12-р анги" -> [10, 12]
+  const hasExactDate = Boolean(f.date && /^\d{4}-\d{2}-\d{2}$/.test(f.date));
+  if (hasExactDate) await connection();
 
   return resolve(
     matches.filter((m) => {
@@ -64,7 +68,21 @@ export async function getMatches(f: MatchFilters = {}): Promise<Match[]> {
         if (g < range[0] || g > range[1]) return false;
       }
 
-      if (f.date === "Энэ амралтын өдрүүдээр") {
+      if (f.date && /^\d{4}-\d{2}-\d{2}$/.test(f.date)) {
+        const selected = new Date(`${f.date}T00:00:00`);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const isToday = selected.getTime() === today.getTime();
+        const isTomorrow = selected.getTime() === tomorrow.getTime();
+        const isWeekend = selected.getDay() === 0 || selected.getDay() === 6;
+
+        if (isToday && !m.whenLabel.startsWith("Өнөөдөр")) return false;
+        if (isTomorrow && !m.whenLabel.startsWith("Маргааш")) return false;
+        if (!isToday && !isTomorrow && isWeekend && !/^(Бямба|Ням)/.test(m.whenLabel)) return false;
+        if (!isToday && !isTomorrow && !isWeekend) return false;
+      } else if (f.date === "Энэ амралтын өдрүүдээр") {
         if (!/^(Бямба|Ням)/.test(m.whenLabel)) return false;
       } else if (f.date && !m.whenLabel.startsWith(f.date)) {
         return false;
